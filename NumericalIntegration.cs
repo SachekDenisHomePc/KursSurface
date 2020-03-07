@@ -13,7 +13,7 @@ namespace KursSurface
     {
         public double CalculateBySimpsonMethod(DoubleIntegrationInfo integrationInfo, Func<double, double, double> surfaceFunction)
         {
-            int n = 300;
+            int n = 1000;
             double resultWithoutThreads = 0;
             double resultWithThreads = 0;
 
@@ -53,22 +53,40 @@ namespace KursSurface
 
             ConcurrentBag<double> sum = new ConcurrentBag<double>();
 
-            Parallel.For(0, n, options , i =>
-            {
-                for (int j = 0; j < n; j++)
-                {
-                    sum.Add(surfaceFunction(GetByOffset(2 * i, integrationInfo.XStart, stepX), GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
-                        surfaceFunction(GetByOffset(2 * i + 2, integrationInfo.XStart, stepX), GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
-                        surfaceFunction(GetByOffset(2 * i + 2, integrationInfo.XStart, stepX), GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
-                        surfaceFunction(GetByOffset(2 * i, integrationInfo.XStart, stepX), GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
-                        4 * (surfaceFunction(GetByOffset(2 * i + 1, integrationInfo.XStart, stepX), GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
-                        surfaceFunction(GetByOffset(2 * i + 2, integrationInfo.XStart, stepX), GetByOffset(2 * j + 1, integrationInfo.YStart, stepY)) +
-                        surfaceFunction(GetByOffset(2 * i + 1, integrationInfo.XStart, stepX), GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
-                        surfaceFunction(GetByOffset(2 * i, integrationInfo.XStart, stepX), GetByOffset(2 * j + 1, integrationInfo.YStart, stepY))) +
-                        16 * surfaceFunction(GetByOffset(2 * i + 1, integrationInfo.XStart, stepX), GetByOffset(2 * j + 1, integrationInfo.YStart, stepY)));
-                   
-                }
-            });
+            Parallel.For(0, n, options, i =>
+           {
+               for (int j = 0; j < n; j++)
+               {
+                   sum.Add(surfaceFunction(
+                            GetByOffset(2 * i, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
+                        surfaceFunction(
+                            GetByOffset(2 * i + 2, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
+                        surfaceFunction(
+                            GetByOffset(2 * i + 2, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
+                        surfaceFunction(
+                            GetByOffset(2 * i, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
+                        4 * (surfaceFunction(
+                            GetByOffset(2 * i + 1, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
+                        surfaceFunction(
+                            GetByOffset(2 * i + 2, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j + 1, integrationInfo.YStart, stepY)) +
+                        surfaceFunction(
+                            GetByOffset(2 * i + 1, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
+                        surfaceFunction(
+                            GetByOffset(2 * i, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j + 1, integrationInfo.YStart, stepY))) +
+                        16 * surfaceFunction(
+                            GetByOffset(2 * i + 1, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j + 1, integrationInfo.YStart, stepY)));
+
+               }
+           });
 
             return stepX * stepY / 9 * sum.Sum();
         }
@@ -82,15 +100,34 @@ namespace KursSurface
             for (int i = 0; i < n; i++)
                 for (int j = 0; j < n; j++)
                 {
-                    sum += surfaceFunction(GetByOffset(2 * i, integrationInfo.XStart, stepX), GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
-                        surfaceFunction(GetByOffset(2 * i + 2, integrationInfo.XStart, stepX), GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
-                        surfaceFunction(GetByOffset(2 * i + 2, integrationInfo.XStart, stepX), GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
-                        surfaceFunction(GetByOffset(2 * i, integrationInfo.XStart, stepX), GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
-                        4 * (surfaceFunction(GetByOffset(2 * i + 1, integrationInfo.XStart, stepX), GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
-                        surfaceFunction(GetByOffset(2 * i + 2, integrationInfo.XStart, stepX), GetByOffset(2 * j + 1, integrationInfo.YStart, stepY)) +
-                        surfaceFunction(GetByOffset(2 * i + 1, integrationInfo.XStart, stepX), GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
-                        surfaceFunction(GetByOffset(2 * i, integrationInfo.XStart, stepX), GetByOffset(2 * j + 1, integrationInfo.YStart, stepY))) +
-                        16 * surfaceFunction(GetByOffset(2 * i + 1, integrationInfo.XStart, stepX), GetByOffset(2 * j + 1, integrationInfo.YStart, stepY));
+                    sum +=
+                        surfaceFunction(
+                            GetByOffset(2 * i, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
+                        surfaceFunction(
+                            GetByOffset(2 * i + 2, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
+                        surfaceFunction(
+                            GetByOffset(2 * i + 2, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
+                        surfaceFunction(
+                            GetByOffset(2 * i, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
+                        4 * (surfaceFunction(
+                            GetByOffset(2 * i + 1, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
+                        surfaceFunction(
+                            GetByOffset(2 * i + 2, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j + 1, integrationInfo.YStart, stepY)) +
+                        surfaceFunction(
+                            GetByOffset(2 * i + 1, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
+                        surfaceFunction(
+                            GetByOffset(2 * i, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j + 1, integrationInfo.YStart, stepY))) +
+                        16 * surfaceFunction(
+                            GetByOffset(2 * i + 1, integrationInfo.XStart, stepX),
+                            GetByOffset(2 * j + 1, integrationInfo.YStart, stepY));
                 }
 
 
