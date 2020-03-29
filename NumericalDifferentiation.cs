@@ -4,7 +4,7 @@ namespace KursSurface
 {
     public class NumericalDifferentiation
     {
-        const double Epsilon = 1e-10;
+        const double Epsilon = 1e-5;
         public double CalculateDerivative(Func<double, double, double> function, double x, double y, DerivativeType type)
         {
             var xStep = 0.0;
