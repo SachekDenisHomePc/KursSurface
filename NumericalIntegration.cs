@@ -13,7 +13,7 @@ namespace KursSurface
     {
         public double CalculateBySimpsonMethod(DoubleIntegrationInfo integrationInfo, Func<double, double, double> surfaceFunction)
         {
-            int n = 400;
+            int n = 1000;
             double resultWithoutThreads = 0;
             double resultWithThreads = 0;
 
@@ -31,6 +31,10 @@ namespace KursSurface
             stopwatch.Stop();
 
             var timeWithThreads = stopwatch.Elapsed;
+
+            Console.WriteLine($"Время без потоков: {timeWithoutThreads}");
+            Console.WriteLine($"Время с потоками: {timeWithThreads}");
+            Console.WriteLine($"Площадь : {resultWithoutThreads}");
 
             return resultWithThreads;
         }
