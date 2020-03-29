@@ -19,8 +19,6 @@ namespace KursSurface
             var numericalIntegration = new NumericalIntegration();
 
             numericalIntegration.CalculateBySimpsonMethod(integrationInfo,_surface.CalculateSurfaceFunction);
-
-            Console.WriteLine("Hello World!");
         }
     }
 }
