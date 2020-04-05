@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KursSurface", "KursSurface.csproj", "{80FB2BEA-B9A0-470B-833F-A01DC9BC6CCA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KursSurface", "C#\KursSurface.csproj", "{1472C3D7-C4DF-4159-BB21-0E370A9BAEEE}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PythonSurface", "Python\PythonSurface\PythonSurface.pyproj", "{58705B02-6673-45A1-80D8-625266D483C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,12 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{80FB2BEA-B9A0-470B-833F-A01DC9BC6CCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{80FB2BEA-B9A0-470B-833F-A01DC9BC6CCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{80FB2BEA-B9A0-470B-833F-A01DC9BC6CCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{80FB2BEA-B9A0-470B-833F-A01DC9BC6CCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1472C3D7-C4DF-4159-BB21-0E370A9BAEEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1472C3D7-C4DF-4159-BB21-0E370A9BAEEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1472C3D7-C4DF-4159-BB21-0E370A9BAEEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1472C3D7-C4DF-4159-BB21-0E370A9BAEEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58705B02-6673-45A1-80D8-625266D483C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58705B02-6673-45A1-80D8-625266D483C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
