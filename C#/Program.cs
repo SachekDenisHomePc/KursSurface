@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using MathNet.Symbolics;
 
 namespace KursSurface
 {
@@ -6,9 +8,11 @@ namespace KursSurface
     {
         static void Main(string[] args)
         {
-            Surface _surface = new Surface();
+            string expression = "-2*x^2+(-2*y^2)+(-3*sin(x)*cos(y))";
 
-            var integrationInfo = new DoubleIntegrationInfo()
+            Surface _surface = new Surface(expression);
+
+            var integrationInfo = new DoubleIntegrationInfo
             {
                 XStart = -100,
                 XEnd = 100,
@@ -18,7 +22,7 @@ namespace KursSurface
 
             var numericalIntegration = new NumericalIntegration();
 
-            numericalIntegration.CalculateBySimpsonMethod(integrationInfo,_surface.CalculateSurfaceFunction);
+            numericalIntegration.CalculateBySimpsonMethod(integrationInfo, _surface.CalculateSurfaceFunction);
         }
     }
 }
