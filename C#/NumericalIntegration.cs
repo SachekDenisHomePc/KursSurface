@@ -9,40 +9,30 @@ using System.Threading.Tasks;
 
 namespace KursSurface
 {
-    class NumericalIntegration
+    public class NumericalIntegration
     {
-        public double CalculateBySimpsonMethod(DoubleIntegrationInfo integrationInfo, Func<double, double, double> surfaceFunction)
+        public IntegrationExtendedInfo CalculateBySimpsonMethod(DoubleIntegrationInfo integrationInfo, Func<double, double, double> surfaceFunction)
         {
-            int n = 500;
-            double resultWithoutThreads = 0;
-            double resultWithThreads = 0;
+            int n = 180;
+            double result = 0;
+            var threadsTime = new Dictionary<int, TimeSpan>();
 
-            Stopwatch stopwatch = new Stopwatch();
+            var stopwatch = new Stopwatch();
 
-            stopwatch.Start();
-            resultWithoutThreads = CalculateDoubleSimpsonWithoutThreads(integrationInfo, surfaceFunction, n);
-            stopwatch.Stop();
-
-            var timeWithoutThreads = stopwatch.Elapsed;
-
-            stopwatch.Reset();
-
-            Console.WriteLine($"Время без потоков: {timeWithoutThreads}");
-
-            for (int i = 2; i < 8; i++)
+            for (int i = 1; i <= 15; i++)
             {
                 stopwatch.Start();
-                resultWithThreads = CalculateDoubleSimpsonWithThreads(integrationInfo, surfaceFunction, n, i);
+                result = CalculateDoubleSimpsonWithThreads(integrationInfo, surfaceFunction, n, i);
                 stopwatch.Stop();
-                Console.WriteLine($"Время с {i} потоками: {stopwatch.Elapsed}");
+                threadsTime.Add(i,stopwatch.Elapsed);
                 stopwatch.Reset();
             }
 
-            var timeWithThreads = stopwatch.Elapsed;
-
-            Console.WriteLine($"Площадь : {resultWithoutThreads}");
-
-            return resultWithThreads;
+            return new IntegrationExtendedInfo()
+            {
+                IntegrationResult = result,
+                ThreadsTime = threadsTime
+            };
         }
 
         private double GetStep(int n, double start, double end)
@@ -145,6 +135,5 @@ namespace KursSurface
 
             return stepX * stepY / 9 * sum;
         }
-
     }
 }

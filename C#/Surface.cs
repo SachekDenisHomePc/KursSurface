@@ -5,7 +5,7 @@ using MathNet.Symbolics;
 
 namespace KursSurface
 {
-    class Surface
+    public class Surface
     {
         private readonly NumericalDifferentiation _numericalDifferentiation = new NumericalDifferentiation();
 
@@ -33,11 +33,13 @@ namespace KursSurface
 
         private double CalculateXDerivative(double x, double y)
         {
+            //return A*2*x+C*Math.Cos(x) * Math.Cos(y);
             return _numericalDifferentiation.CalculateDerivative(CalculateSourceFunction, x, y, DerivativeType.X);
         }
 
         private double CalculateYDerivative(double x, double y)
         {
+            //return B*2*y-C*Math.Sin(x) * Math.Sin(y);
             return _numericalDifferentiation.CalculateDerivative(CalculateSourceFunction, x, y, DerivativeType.Y);
         }
 

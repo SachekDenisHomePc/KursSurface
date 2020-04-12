@@ -1,0 +1,94 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model SurfaceViewModel
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<div class="row">
+    <div class="col">
+        <div>
+            <form asp-action="CalculateSurface">
+                <div class="row">
+                    <div class="col">
+                        <label for="inputExpression">Expression</label>
+                        <input type="text" class="form-control" id="inputExpression" name="Expression" value="-2*x^2+(-2*y^2)+(-3*sin(x)*cos(y))" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="inputXStart">X Start</label>
+                        <input type="text" class="form-control" id="inputXStart" name="XStart" value="-100" />
+                    </div>
+                    <div class="col">
+                        <label for="inputXEnd">X End</label>
+                        <input type="text" class="form-control" id="inputXEnd" name="XEnd" value="100" />
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label for="inputYStart">Y Start</label>
+                        <input type="text" class="form-control" id="inputYStart" name="YStart" value="-20" />
+                    </div>
+                    <div class="col">
+                        <label for="inputYEnd">Y End</label>
+                        <input type="text" class="form-control" id="inputYEnd" name="YEnd" value="20" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary">Calculate</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@if (Model != null)
+{
+    <div class="row">
+        <div class="col">
+            <div id="pythonResult"></div>
+            <div id="simpsonResult"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <img src="~/images/python.png" class="img-fluid" asp-append-version="true" />
+        </div>
+        <div class="col">
+            <div id="chart_div" class="container-fluid"></div>
+            <script type="text/javascript">
+
+                google.charts.load('current', { 'packages': ['corechart'] });
+
+                google.charts.setOnLoadCallback(drawChart);
+
+                function drawChart() {
+                    $.getJSON("/Home/GetChartData", 
+                        jsonData => {
+
+                        var data = new google.visualization.DataTable(jsonData);
+
+                        // Set chart options
+                        var options = {
+                            'title': 'Threads time',
+                            'width': 600,
+                            'height': 500
+                        };
+
+                        // Instantiate and draw our chart, passing in some options.
+                        var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+                        chart.draw(data, options);
+
+
+                        $.getJSON("/Home/GetSimpsonResult",
+                            jsonResult => {
+                                document.getElementById("simpsonResult").innerText = jsonResult;
+                            });
+                    });
+                }
+            </script>
+        </div>
+    </div>
+}

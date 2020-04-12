@@ -23,6 +23,8 @@ axes = Axes3D(fig)
 
 axes.plot_surface(x, y, z)
 
+pylab.savefig("1.png")
+
 square = scipy.integrate.dblquad(Square,-100,100,-20,20)
 
 pylab.show()
