@@ -40,7 +40,7 @@ inputData = []
 
 xSymbol,ySymbol = sympy.symbols('x y')
 
-with open('pythonData.json') as file:
+with open('PythonScript\pythonData.json') as file:
    inputData = json.load(file)
 
 expression = parse_expr(inputData["Expression"].replace("^","**"))
@@ -52,7 +52,7 @@ axes = Axes3D(fig)
 
 axes.plot_surface(x, y, z)
 
-#pylab.savefig("python.png")
+pylab.savefig("wwwroot\images\python.png")
 
 xDif =sympy.diff(expression,xSymbol);
 yDif =sympy.diff(expression,ySymbol);
@@ -61,6 +61,6 @@ yExpr = sympy.lambdify([xSymbol,ySymbol],yDif,"numpy")
 
 square = scipy.integrate.dblquad(Square,inputData["XStart"], inputData["XEnd"], inputData["YStart"], inputData["YEnd"],args=(xExpr,yExpr))
 
-pylab.show()
+#pylab.show()
 
-print(square[0])
+#print(square[0])
