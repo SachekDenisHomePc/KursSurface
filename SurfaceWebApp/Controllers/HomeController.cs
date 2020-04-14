@@ -84,7 +84,7 @@ namespace SurfaceWebApp.Controllers
             return Json(JsonSerializer.Serialize(DataStorage.SurfaceData.SimpsonResult));
         }
 
-        public IActionResult GetPythonResult()
+        public async Task<IActionResult> GetPythonResult()
         {
             var jsonPythonData = JsonSerializer.Serialize(DataStorage.SurfaceData);
 
@@ -101,9 +101,16 @@ namespace SurfaceWebApp.Controllers
 
             Process process = Process.Start(start);
 
+            var line = await process.StandardOutput.ReadLineAsync();
+
             process.WaitForExit();
 
-            return Json(null);
+            return Json(JsonSerializer.Serialize(line));
+        }
+
+        public IActionResult GetGraphImage()
+        {
+            return PartialView("PartialViews/GraphPartialView");
         }
 
 

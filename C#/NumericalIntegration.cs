@@ -13,7 +13,7 @@ namespace KursSurface
     {
         public IntegrationExtendedInfo CalculateBySimpsonMethod(DoubleIntegrationInfo integrationInfo, Func<double, double, double> surfaceFunction)
         {
-            int n = 180;
+            int n = 220;
             double result = 0;
             var threadsTime = new Dictionary<int, TimeSpan>();
 

@@ -7,6 +7,7 @@ import scipy.integrate
 import json
 import sympy
 from sympy.parsing.sympy_parser import parse_expr
+import os
 
 def Square(x,y,xExpr, yExpr):
     xSymbol,ySymbol = sympy.symbols('x y')
@@ -52,6 +53,7 @@ axes = Axes3D(fig)
 
 axes.plot_surface(x, y, z)
 
+os.remove("wwwroot\images\python.png")
 pylab.savefig("wwwroot\images\python.png")
 
 xDif =sympy.diff(expression,xSymbol);
@@ -63,4 +65,4 @@ square = scipy.integrate.dblquad(Square,inputData["XStart"], inputData["XEnd"], 
 
 #pylab.show()
 
-#print(square[0])
+print(square[0])

@@ -1,1 +1,1 @@
-{"Expression":"-2*x^2\u002B(-2*y^2)\u002B(-3*sin(x)*cos(y))","XStart":-100,"XEnd":100,"YStart":-20,"YEnd":20,"SimpsonResult":0}
+{"Expression":"2*x^2\u002B(-2*y^2)\u002B(-3*sin(x)*cos(y))","XStart":-100,"XEnd":100,"YStart":-20,"YEnd":20,"SimpsonResult":1667071.0651686902}
