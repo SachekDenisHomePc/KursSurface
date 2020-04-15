@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -24,7 +25,7 @@ namespace KursSurface
                 stopwatch.Start();
                 result = CalculateDoubleSimpsonWithThreads(integrationInfo, surfaceFunction, n, i);
                 stopwatch.Stop();
-                threadsTime.Add(i,stopwatch.Elapsed);
+                threadsTime.Add(i, stopwatch.Elapsed);
                 stopwatch.Reset();
             }
 
@@ -47,6 +48,7 @@ namespace KursSurface
 
         private double CalculateDoubleSimpsonWithThreads(DoubleIntegrationInfo integrationInfo, Func<double, double, double> surfaceFunction, int n, int numberOfThreads)
         {
+            object lockObject = new object();
             double stepX = GetStep(n, integrationInfo.XStart, integrationInfo.XEnd);
             double stepY = GetStep(n, integrationInfo.YStart, integrationInfo.YEnd);
             ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = numberOfThreads };
@@ -54,40 +56,47 @@ namespace KursSurface
             ConcurrentBag<double> sum = new ConcurrentBag<double>();
             ConcurrentBag<int> threadTest = new ConcurrentBag<int>();
 
-            Parallel.For(0, n, options, i =>
+            using (StreamWriter writer = new StreamWriter("ThreadsInfo/" + numberOfThreads + ".txt"))
             {
-                threadTest.Add(Thread.CurrentThread.ManagedThreadId);
-                for (int j = 0; j < n; j++)
+                Parallel.For(0, n, options, i =>
                 {
-                    sum.Add(surfaceFunction(
-                                GetByOffset(2 * i, integrationInfo.XStart, stepX),
-                                GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
-                            surfaceFunction(
-                                GetByOffset(2 * i + 2, integrationInfo.XStart, stepX),
-                                GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
-                            surfaceFunction(
-                                GetByOffset(2 * i + 2, integrationInfo.XStart, stepX),
-                                GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
-                            surfaceFunction(
-                                GetByOffset(2 * i, integrationInfo.XStart, stepX),
-                                GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
-                            4 * (surfaceFunction(
-                                     GetByOffset(2 * i + 1, integrationInfo.XStart, stepX),
-                                     GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
-                                 surfaceFunction(
-                                     GetByOffset(2 * i + 2, integrationInfo.XStart, stepX),
-                                     GetByOffset(2 * j + 1, integrationInfo.YStart, stepY)) +
-                                 surfaceFunction(
-                                     GetByOffset(2 * i + 1, integrationInfo.XStart, stepX),
-                                     GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
-                                 surfaceFunction(
-                                     GetByOffset(2 * i, integrationInfo.XStart, stepX),
-                                     GetByOffset(2 * j + 1, integrationInfo.YStart, stepY))) +
-                            16 * surfaceFunction(
-                                GetByOffset(2 * i + 1, integrationInfo.XStart, stepX),
-                                GetByOffset(2 * j + 1, integrationInfo.YStart, stepY)));
-                };
-            });
+                    for (int j = 0; j < n; j++)
+                    {
+                        sum.Add(surfaceFunction(
+                                    GetByOffset(2 * i, integrationInfo.XStart, stepX),
+                                    GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
+                                surfaceFunction(
+                                    GetByOffset(2 * i + 2, integrationInfo.XStart, stepX),
+                                    GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
+                                surfaceFunction(
+                                    GetByOffset(2 * i + 2, integrationInfo.XStart, stepX),
+                                    GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
+                                surfaceFunction(
+                                    GetByOffset(2 * i, integrationInfo.XStart, stepX),
+                                    GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
+                                4 * (surfaceFunction(
+                                         GetByOffset(2 * i + 1, integrationInfo.XStart, stepX),
+                                         GetByOffset(2 * j, integrationInfo.YStart, stepY)) +
+                                     surfaceFunction(
+                                         GetByOffset(2 * i + 2, integrationInfo.XStart, stepX),
+                                         GetByOffset(2 * j + 1, integrationInfo.YStart, stepY)) +
+                                     surfaceFunction(
+                                         GetByOffset(2 * i + 1, integrationInfo.XStart, stepX),
+                                         GetByOffset(2 * j + 2, integrationInfo.YStart, stepY)) +
+                                     surfaceFunction(
+                                         GetByOffset(2 * i, integrationInfo.XStart, stepX),
+                                         GetByOffset(2 * j + 1, integrationInfo.YStart, stepY))) +
+                                16 * surfaceFunction(
+                                    GetByOffset(2 * i + 1, integrationInfo.XStart, stepX),
+                                    GetByOffset(2 * j + 1, integrationInfo.YStart, stepY)));
+                    }
+
+                    lock (lockObject)
+                    {
+                        writer.WriteLine(Thread.CurrentThread.ManagedThreadId + " : " + sum.Sum());
+                    }
+                });
+            }
 
             var test = threadTest.Distinct().ToList();
             return stepX * stepY / 9 * sum.Sum();

@@ -29,12 +29,23 @@ namespace SurfaceWebApp.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.SurfaceData = new SurfaceData
+            {
+                Expression = "-2*x^2+(-2*y^2)+(-3*sin(x)*cos(y))",
+                XStart = -100,
+                XEnd = 100,
+                YEnd = 20,
+                YStart = -20
+            };
+
             return View();
         }
 
         public IActionResult CalculateSurface(SurfaceData surfaceData)
         {
             ViewBag.SimpsonResult = 0;
+            ViewBag.SurfaceData = surfaceData;
+
             DataStorage.SurfaceData.Expression = surfaceData.Expression;
             DataStorage.SurfaceData.YStart = surfaceData.YStart;
             DataStorage.SurfaceData.YEnd = surfaceData.YEnd;
@@ -43,7 +54,6 @@ namespace SurfaceWebApp.Controllers
 
 
             var viewModel = new SurfaceViewModel();
-            //viewModel.ThreadsTimeJson = json;
 
             return View("Index", viewModel);
         }

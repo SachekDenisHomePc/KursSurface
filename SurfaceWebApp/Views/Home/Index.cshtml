@@ -11,27 +11,27 @@
                 <div class="row">
                     <div class="col">
                         <label for="inputExpression">Expression</label>
-                        <input type="text" class="form-control" id="inputExpression" name="Expression" value="-2*x^2+(-2*y^2)+(-3*sin(x)*cos(y))" />
+                        <input type="text" class="form-control" id="inputExpression" name="Expression" value="@ViewBag.SurfaceData.Expression" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <label for="inputXStart">X Start</label>
-                        <input type="text" class="form-control" id="inputXStart" name="XStart" value="-100" />
+                        <input type="text" class="form-control" id="inputXStart" name="XStart" value="@ViewBag.SurfaceData.XStart" />
                     </div>
                     <div class="col">
                         <label for="inputXEnd">X End</label>
-                        <input type="text" class="form-control" id="inputXEnd" name="XEnd" value="100" />
+                        <input type="text" class="form-control" id="inputXEnd" name="XEnd" value="@ViewBag.SurfaceData.XEnd" />
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col">
                         <label for="inputYStart">Y Start</label>
-                        <input type="text" class="form-control" id="inputYStart" name="YStart" value="-20" />
+                        <input type="text" class="form-control" id="inputYStart" name="YStart" value="@ViewBag.SurfaceData.YStart" />
                     </div>
                     <div class="col">
                         <label for="inputYEnd">Y End</label>
-                        <input type="text" class="form-control" id="inputYEnd" name="YEnd" value="20" />
+                        <input type="text" class="form-control" id="inputYEnd" name="YEnd" value="@ViewBag.SurfaceData.YEnd" />
                     </div>
                 </div>
                 <div class="row">
@@ -101,7 +101,7 @@
 
                             $.getJSON("/Home/GetSimpsonResult",
                                 jsonResult => {
-                                    document.getElementById("simpsonResult").innerText = jsonResult;
+                                    document.getElementById("simpsonResult").innerText = "Simpson method: " + jsonResult;
                                 });
                         });
 
@@ -112,7 +112,7 @@
                                 url: "/Home/GetGraphImage",
                                 dataType: "html"
                             }).done(result => $("#graphImage").html(result));
-                            $("#pythonResult").text(JSON.parse(jsonData));
+                            $("#pythonResult").text("Python: " + JSON.parse(jsonData));
                         });
                 }
             </script>
