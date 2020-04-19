@@ -51,7 +51,11 @@ x, y, z = makeData(inputData["XStart"], inputData["XEnd"], inputData["YStart"], 
 fig = pylab.figure()
 axes = Axes3D(fig)
 
-axes.plot_surface(x, y, z)
+axes.plot_surface(x, y, z, color="#ff8500")
+axes.set_facecolor('#1C1C1C')
+axes.tick_params(axis='x', colors='#ff8500')
+axes.tick_params(axis='y', colors='#ff8500')
+axes.tick_params(axis='z', colors='#ff8500')
 
 os.remove("wwwroot\images\python.png")
 pylab.savefig("wwwroot\images\python.png")
