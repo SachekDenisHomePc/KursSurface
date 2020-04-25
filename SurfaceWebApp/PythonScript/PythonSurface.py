@@ -49,13 +49,27 @@ expression = parse_expr(inputData["Expression"].replace("^","**"))
 x, y, z = makeData(inputData["XStart"], inputData["XEnd"], inputData["YStart"], inputData["YEnd"], expression)
 
 fig = pylab.figure()
+
 axes = Axes3D(fig)
+
+axes.xaxis.pane.fill = False
+axes.yaxis.pane.fill = False
+axes.zaxis.pane.fill = False
+axes.w_xaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
+
+# Now set color to white (or whatever is "invisible")
+axes.xaxis.pane.set_edgecolor('w')
+axes.yaxis.pane.set_edgecolor('w')
+axes.zaxis.pane.set_edgecolor('w')
+
+# Bonus: To get rid of the grid as well:
+axes.grid(True)
 
 axes.plot_surface(x, y, z, color="#ff8500")
 axes.set_facecolor('#1C1C1C')
-axes.tick_params(axis='x', colors='#ff8500')
-axes.tick_params(axis='y', colors='#ff8500')
-axes.tick_params(axis='z', colors='#ff8500')
+axes.tick_params(axis='x', colors='white')
+axes.tick_params(axis='y', colors='white')
+axes.tick_params(axis='z', colors='white')
 
 os.remove("wwwroot\images\python.png")
 pylab.savefig("wwwroot\images\python.png")
