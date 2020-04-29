@@ -6,6 +6,10 @@ import scipy
 import scipy.integrate
 import json
 import sympy
+import time
+import win32pipe
+import win32file
+import pywintypes
 from sympy.parsing.sympy_parser import parse_expr
 
 def Square(x,y,xExpr, yExpr):
@@ -14,7 +18,7 @@ def Square(x,y,xExpr, yExpr):
     xDif = xExpr(x,y)
     yDif = yExpr(x,y)
 
-    return math.sqrt(1 + xDif**2 + yDif**2)
+    return math.sqrt(1 + xDif ** 2 + yDif ** 2)
 
 def makeData(xStart,xEnd,yStart,yEnd,expression):
     xArray = numpy.arange(xStart, xEnd, 1)
@@ -23,7 +27,7 @@ def makeData(xStart,xEnd,yStart,yEnd,expression):
 
     x,y = sympy.symbols('x y')
 
-    zgrid = numpy.array(numpy.arange(len(xgrid)*len(xgrid[0]),dtype=numpy.float))
+    zgrid = numpy.array(numpy.arange(len(xgrid) * len(xgrid[0]),dtype=numpy.float))
     zgrid.shape = (len(xgrid),len(xgrid[0]))
 
 
@@ -33,15 +37,36 @@ def makeData(xStart,xEnd,yStart,yEnd,expression):
         for j in range(0,len(xgrid[0])):
             zgrid[i,j] = lExpr(xgrid[i,j],ygrid[i,j])
 
-    #zgrid = -2 * xgrid ** 2 + -2 * ygrid ** 2 + -3 * numpy.sin(xgrid) * numpy.cos(ygrid)
+    #zgrid = -2 * xgrid ** 2 + -2 * ygrid ** 2 + -3 * numpy.sin(xgrid) *
+    #numpy.cos(ygrid)
     return xgrid, ygrid, zgrid
 
-inputData = []
+
+quit = False
+resp = []
+while not quit:
+     try:
+        handle = win32file.CreateFile(r'\\.\pipe\pythonPipe',
+                        win32file.GENERIC_READ | win32file.GENERIC_WRITE,
+                        0,
+                        None,
+                        win32file.OPEN_EXISTING,
+                        0,
+                        None)
+        win32pipe.SetNamedPipeHandleState(handle, win32pipe.PIPE_READMODE_MESSAGE, None, None)
+        resp = win32file.ReadFile(handle, 64 * 1024)[1].decode('utf-16')
+        print(resp)
+     except pywintypes.error as e:
+         if e.args[0] == 2:
+             print("no pipe, trying again in a sec")
+             time.sleep(1)
+         if resp != []:
+             print("broken pipe, bye bye")
+             quit = True
+
+inputData = json.loads(resp)
 
 xSymbol,ySymbol = sympy.symbols('x y')
-
-with open('pythonData.json') as file:
-   inputData = json.load(file)
 
 expression = parse_expr(inputData["Expression"].replace("^","**"))
 
@@ -53,9 +78,8 @@ axes = Axes3D(fig)
 axes.plot_surface(x, y, z)
 
 #pylab.savefig("python.png")
-
-xDif =sympy.diff(expression,xSymbol);
-yDif =sympy.diff(expression,ySymbol);
+xDif = sympy.diff(expression,xSymbol)
+yDif = sympy.diff(expression,ySymbol)
 xExpr = sympy.lambdify([xSymbol,ySymbol],xDif,"numpy")
 yExpr = sympy.lambdify([xSymbol,ySymbol],yDif,"numpy")
 

@@ -6,6 +6,10 @@ import scipy
 import scipy.integrate
 import json
 import sympy
+import time
+import win32pipe
+import win32file
+import pywintypes
 from sympy.parsing.sympy_parser import parse_expr
 import os
 
@@ -39,10 +43,28 @@ def makeData(xStart,xEnd,yStart,yEnd,expression):
 
 inputData = []
 
-xSymbol,ySymbol = sympy.symbols('x y')
+quit = False
+resp = []
+while not quit:
+     try:
+        handle = win32file.CreateFile(r'\\.\pipe\pythonPipe',
+                        win32file.GENERIC_READ | win32file.GENERIC_WRITE,
+                        0,
+                        None,
+                        win32file.OPEN_EXISTING,
+                        0,
+                        None)
+        win32pipe.SetNamedPipeHandleState(handle, win32pipe.PIPE_READMODE_MESSAGE, None, None)
+        resp = win32file.ReadFile(handle, 64 * 1024)[1].decode('utf-16')
+     except pywintypes.error as e:
+         if e.args[0] == 2:
+             time.sleep(1)
+         if resp != []:
+             quit = True
 
-with open('PythonScript\pythonData.json') as file:
-   inputData = json.load(file)
+inputData = json.loads(resp)
+
+xSymbol,ySymbol = sympy.symbols('x y')
 
 expression = parse_expr(inputData["Expression"].replace("^","**"))
 
@@ -66,7 +88,7 @@ axes.zaxis.pane.set_edgecolor('w')
 axes.grid(True)
 
 axes.plot_surface(x, y, z, color="#ff8500")
-axes.set_facecolor('#1C1C1C')
+axes.set_facecolor('#333333')
 axes.tick_params(axis='x', colors='white')
 axes.tick_params(axis='y', colors='white')
 axes.tick_params(axis='z', colors='white')

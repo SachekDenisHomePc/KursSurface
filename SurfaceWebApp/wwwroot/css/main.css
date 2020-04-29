@@ -5,3 +5,16 @@
 header{
     background-color: #191818;
 }
+
+footer {
+    background-color: #191818;
+}
+
+.greyinput {
+    background: #333;
+    color: white;
+}
+
+.imgGraph {
+    max-height: 372px;
+}

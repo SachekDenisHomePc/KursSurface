@@ -13,7 +13,7 @@ namespace KursSurface
 
         public Surface(string expression)
         {
-            _expression = Infix.ParseOrThrow(expression); ;
+            _expression = Infix.ParseOrThrow(expression);
         }
 
         private const double A = -2;

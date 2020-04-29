@@ -13,12 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\C#\KursSurface.csproj" />
+    <Folder Include="wwwroot\images\" />
+    <Folder Include="ThreadsInfo\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\images\" />
-    <Folder Include="ThreadsInfo\" />
+    <ProjectReference Include="..\C#\SimpsonSurface.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

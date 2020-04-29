@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-@model SurfaceViewModel
+@model SurfaceData
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 <div class="row">
@@ -11,32 +11,37 @@
                 <div class="row">
                     <div class="col">
                         <label style="color:#ff8500;font-size:25px" for="inputExpression">Expression</label>
-                        <input type="text" class="form-control" id="inputExpression" name="Expression" value="@ViewBag.SurfaceData.Expression" />
+                        <input type="text" class="form-control greyinput" id="inputExpression" name="Expression" value="@ViewBag.SurfaceData.Expression" />
+                        <span asp-validation-for="Expression"></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <label for="inputXStart">X Start</label>
-                        <input type="text" class="form-control" id="inputXStart" name="XStart" value="@ViewBag.SurfaceData.XStart" />
+                        <input type="text" class="form-control greyinput" id="inputXStart" name="XStart" value="@ViewBag.SurfaceData.XStart" />
+                        <span asp-validation-for="XStart" style="color:red"></span>
                     </div>
                     <div class="col">
                         <label for="inputXEnd">X End</label>
-                        <input type="text" class="form-control" id="inputXEnd" name="XEnd" value="@ViewBag.SurfaceData.XEnd" />
+                        <input type="text" class="form-control greyinput" id="inputXEnd" name="XEnd" value="@ViewBag.SurfaceData.XEnd" />
+                        <span asp-validation-for="XEnd" style="color:red"></span>
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col">
                         <label for="inputYStart">Y Start</label>
-                        <input type="text" class="form-control" id="inputYStart" name="YStart" value="@ViewBag.SurfaceData.YStart" />
+                        <input type="text" class="form-control greyinput" id="inputYStart" name="YStart" value="@ViewBag.SurfaceData.YStart" />
+                        <span asp-validation-for="YStart" style="color:red"></span>
                     </div>
                     <div class="col">
                         <label for="inputYEnd">Y End</label>
-                        <input type="text" class="form-control" id="inputYEnd" name="YEnd" value="@ViewBag.SurfaceData.YEnd" />
+                        <input type="text" class="form-control greyinput" id="inputYEnd" name="YEnd" value="@ViewBag.SurfaceData.YEnd" />
+                        <span asp-validation-for="YEnd" style="color:red"></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <button style="background-color:#ff8500; border-radius:10px" type="submit" class="btn btn-primary">Calculate</button>
+                        <button style="background-color:#ff8500; border-radius: 10px; color: black;" type="submit" class="btn btn-primary" id="calculateButton">Calculate</button>
                     </div>
                 </div>
             </form>
@@ -44,81 +49,89 @@
     </div>
 </div>
 
-@if (Model != null)
+@if (Model != null && ViewContext.ViewData.ModelState.IsValid)
 {
-    <div class="row">
-        <div class="col">
-            <div id="pythonResult" style="font-size:30px">
-                <div class="spinner-border" role="status">
-                    <span class="sr-only">Loading...</span>
+    <div class="row mt-3">
+        <div class="col-6">
+            <div class="card greyinput">
+                <div class="card-header" id="pythonResult">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="col">
-            <div id="simpsonResult" style="font-size:30px">
-                <div class="spinner-border" role="status">
-                    <span class="sr-only">Loading...</span>
+                <div class="card-body" id="cardPython">
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-6" id="graphImage">
-            <div class="spinner-border" role="status">
-                <span class="sr-only">Loading...</span>
             </div>
         </div>
         <div class="col-6">
-            <div id="chart_div" class="justify-content-center">
-                <div class="spinner-border" role="status">
-                    <span class="sr-only">Loading...</span>
+            <div class="card greyinput">
+                <div class="card-header" id="simpsonResult">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+                <div class="card-body" id="cardSimpson">
+                    <div id="chart_div" class="justify-content-center card-text">
+                    </div>
                 </div>
             </div>
-
-            <script type="text/javascript">
-
-                google.charts.load('current', { 'packages': ['corechart'] });
-
-                google.charts.setOnLoadCallback(drawChart);
-
-                function drawChart() {
-                    $.getJSON("/Home/GetChartData",
-                        jsonData => {
-
-                            var data = new google.visualization.DataTable(jsonData);
-
-                            // Set chart options
-                            var options = {
-                                'title': 'Threads time',
-                                'width': 550,
-                                'height': 400,
-                                'colors': ['#ff8500']
-                            };
-
-                            // Instantiate and draw our chart, passing in some options.
-                            var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
-                            chart.draw(data, options);
-                            
-                            
-
-
-                            $.getJSON("/Home/GetSimpsonResult",
-                                jsonResult => {
-                                    document.getElementById("simpsonResult").innerText = "Simpson method: " + jsonResult;
-                                });
-                        });
-
-                    $.getJSON("/Home/GetPythonResult",
-                        jsonData => {
-                            console.log(jsonData)
-                            $.ajax({
-                                url: "/Home/GetGraphImage",
-                                dataType: "html"
-                            }).done(result => $("#graphImage").html(result));
-                            $("#pythonResult").text("Python: " + JSON.parse(jsonData));
-                        });
-                }
-            </script>
         </div>
     </div>
+
+    <script type="text/javascript">
+
+        google.charts.load('current', { 'packages': ['corechart'] });
+
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            $("#calculateButton").prop( "disabled", true );
+            $.getJSON("/Home/GetChartData",
+                jsonData => {
+
+                    var data = new google.visualization.DataTable(jsonData);
+
+                    // Set chart options
+                    var options = {
+                        'title': 'Threads time',
+                        'width': 500,
+                        'height': 372,
+                        'colors': ['#ff8500'],
+                        'backgroundColor': '#333',
+                        'hAxis': {
+                            textStyle: { color: '#FFF' }
+                        },
+                        'vAxis': {
+                            textStyle: { color: '#FFF' }
+                        },
+                        'titleTextStyle': { color: '#FFF' },
+                        'legendTextStyle': { color: '#FFF' }
+                    };
+
+                    // Instantiate and draw our chart, passing in some options.
+                    var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+                    chart.draw(data, options);
+
+
+
+
+                    $.getJSON("/Home/GetSimpsonResult",
+                        jsonResult => {
+                            document.getElementById("simpsonResult").innerText = "Simpson method: " + jsonResult;
+                        });
+                });
+
+            $.getJSON("/Home/GetPythonResult",
+                jsonData => {
+                    console.log(jsonData)
+                    $.ajax({
+                        url: "/Home/GetGraphImage",
+                        dataType: "html"
+                    }).done(result => $("#cardPython").append(result));
+                    $("#pythonResult").text("Python: " + JSON.parse(jsonData));
+                    $("#calculateButton").prop( "disabled", false );
+                });
+        }
+    </script>
+
 }

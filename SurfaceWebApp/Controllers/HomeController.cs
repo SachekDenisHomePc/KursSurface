@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Google.DataTable.Net.Wrapper;
@@ -43,6 +45,19 @@ namespace SurfaceWebApp.Controllers
 
         public IActionResult CalculateSurface(SurfaceData surfaceData)
         {
+            if (surfaceData.XStart >= surfaceData.XEnd)
+            {
+                ModelState.AddModelError("XStart", "XEnd must be greater than XStart");
+                ModelState.AddModelError("XEnd", "XEnd must be greater than XStart");
+            }
+
+            if (surfaceData.YStart >= surfaceData.YEnd)
+            {
+                ModelState.AddModelError("YStart", "YEnd must be greater than XStart");
+                ModelState.AddModelError("YEnd", "YEnd must be greater than XStart");
+            }
+
+
             ViewBag.SimpsonResult = 0;
             ViewBag.SurfaceData = surfaceData;
 
@@ -52,10 +67,10 @@ namespace SurfaceWebApp.Controllers
             DataStorage.SurfaceData.XStart = surfaceData.XStart;
             DataStorage.SurfaceData.XEnd = surfaceData.XEnd;
 
+            if (!ModelState.IsValid)
+                return View("Index", surfaceData);
 
-            var viewModel = new SurfaceViewModel();
-
-            return View("Index", viewModel);
+            return View("Index", surfaceData);
         }
 
         public IActionResult GetChartData()
@@ -64,15 +79,25 @@ namespace SurfaceWebApp.Controllers
 
             string expression = surfaceData.Expression;
 
-            var surface = new Surface(expression);
+            Surface surface;
+
+            try
+            {
+                surface = new Surface(expression);
+            }
+            catch
+            {
+                return Error();
+            }
+
 
             var integrationArgumentsInfo = new DoubleIntegrationInfo
-            {
-                XStart = surfaceData.XStart,
-                XEnd = surfaceData.XEnd,
-                YStart = surfaceData.YStart,
-                YEnd = surfaceData.YEnd
-            };
+                                           {
+                                               XStart = surfaceData.XStart,
+                                               XEnd = surfaceData.XEnd,
+                                               YStart = surfaceData.YStart,
+                                               YEnd = surfaceData.YEnd
+                                           };
 
             var numericalIntegration = new NumericalIntegration();
 
@@ -91,17 +116,12 @@ namespace SurfaceWebApp.Controllers
 
         public IActionResult GetSimpsonResult()
         {
-            return Json(JsonSerializer.Serialize(DataStorage.SurfaceData.SimpsonResult));
+            return Json(JsonSerializer.Serialize(Math.Round(DataStorage.SurfaceData.SimpsonResult, 3)));
         }
 
         public async Task<IActionResult> GetPythonResult()
         {
             var jsonPythonData = JsonSerializer.Serialize(DataStorage.SurfaceData);
-
-            using (var streamWriter = new StreamWriter("PythonScript\\pythonData.json"))
-            {
-                streamWriter.Write(jsonPythonData);
-            }
 
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = "D:\\Python\\Python37_64\\python.exe";
@@ -111,11 +131,20 @@ namespace SurfaceWebApp.Controllers
 
             Process process = Process.Start(start);
 
+            NamedPipeServerStream pipeServer = new NamedPipeServerStream("pythonPipe", PipeDirection.InOut, 10, PipeTransmissionMode.Message);
+
+            pipeServer.WaitForConnection();
+
+            UnicodeEncoding encoder = new UnicodeEncoding();
+            byte[] outBuffer = encoder.GetBytes(jsonPythonData);
+            pipeServer.Write(outBuffer);
+            pipeServer.Close();
+
             var line = await process.StandardOutput.ReadLineAsync();
 
             process.WaitForExit();
 
-            return Json(JsonSerializer.Serialize(line));
+            return Json(JsonSerializer.Serialize(line.Substring(0, line.IndexOf('.') + 4)));
         }
 
         public IActionResult GetGraphImage()
