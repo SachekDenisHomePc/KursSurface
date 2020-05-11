@@ -14,6 +14,9 @@ namespace SurfaceWebApp.Controllers
         {
             var fileInfo = new FileInfo("threadsData.xlsx");
 
+            if(File.Exists(fileInfo.Name))
+                File.Delete(fileInfo.Name);
+
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             using (var excelPackage = new ExcelPackage(fileInfo))
