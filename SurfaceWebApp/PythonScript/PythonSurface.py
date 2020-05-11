@@ -10,6 +10,7 @@ import time
 import win32pipe
 import win32file
 import pywintypes
+from sympy import *
 from sympy.parsing.sympy_parser import parse_expr
 import os
 
@@ -66,7 +67,7 @@ inputData = json.loads(resp)
 
 xSymbol,ySymbol = sympy.symbols('x y')
 
-expression = parse_expr(inputData["Expression"].replace("^","**"))
+expression = parse_expr(inputData["Expression"].replace("^","**").replace("exp","E**"))
 
 x, y, z = makeData(inputData["XStart"], inputData["XEnd"], inputData["YStart"], inputData["YEnd"], expression)
 

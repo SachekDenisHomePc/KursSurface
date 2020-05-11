@@ -13,6 +13,9 @@ namespace KursSurface
 
         public Surface(string expression)
         {
+            if (expression == null)
+                throw new NullReferenceException();
+
             _expression = Infix.ParseOrThrow(expression);
         }
 

@@ -110,16 +110,15 @@
 
                     // Instantiate and draw our chart, passing in some options.
                     var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
-                    chart.draw(data, options);
-
-
+                    chart.draw(data, options)
 
 
                     $.getJSON("/Home/GetSimpsonResult",
                         jsonResult => {
                             document.getElementById("simpsonResult").innerText = "Simpson method: " + jsonResult;
-                        });
-                });
+                        }).fail(error => $("#simpsonResult").text("Error"));
+
+                }).fail(error => $("#simpsonResult").text("Error"));
 
             $.getJSON("/Home/GetPythonResult",
                 jsonData => {
@@ -129,7 +128,11 @@
                         dataType: "html"
                     }).done(result => $("#cardPython").append(result));
                     $("#pythonResult").text("Python: " + JSON.parse(jsonData));
-                    $("#calculateButton").prop( "disabled", false );
+                    $("#calculateButton").prop("disabled", false );
+                })
+                .fail(error => {
+                    $("#pythonResult").text("Error");
+                    $("#calculateButton").prop("disabled", false);
                 });
         }
     </script>

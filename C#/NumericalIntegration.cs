@@ -14,7 +14,7 @@ namespace KursSurface
     {
         public IntegrationExtendedInfo CalculateBySimpsonMethod(DoubleIntegrationInfo integrationInfo, Func<double, double, double> surfaceFunction)
         {
-            int n = 300;
+            int n = 600;
             double result = 0;
             var threadsTime = new Dictionary<int, TimeSpan>();
 
@@ -24,7 +24,6 @@ namespace KursSurface
             {
                 stopwatch.Start();
                 result = CalculateDoubleSimpsonWithThreads(integrationInfo, surfaceFunction, n, i);
-                var resAlex = CalculateDoubleSimpsonWithoutThreads(integrationInfo, surfaceFunction,n);
                 stopwatch.Stop();
                 threadsTime.Add(i, stopwatch.Elapsed);
                 stopwatch.Reset();
@@ -106,25 +105,6 @@ namespace KursSurface
 
             var test = threadTest.Distinct().ToList();
             return stepX * stepY / 9 * sum.Sum();
-        }
-
-        private double CalculateDoubleSimpsonWithoutThreads(DoubleIntegrationInfo integrationInfo, Func<double, double, double> surfaceFunction, int n)
-        {
-            double stepX = GetStepRect(n, integrationInfo.XStart, integrationInfo.XEnd);
-            double stepY = GetStepRect(n, integrationInfo.YStart, integrationInfo.YEnd);
-            double sum = 0;
-
-            for (int i = 0; i < n; i++)
-                for (int j = 0; j < n; j++)
-                {
-                    sum +=
-                        surfaceFunction(
-                            GetByOffset(i+1, integrationInfo.XStart, stepX),
-                            GetByOffset(j+1, integrationInfo.YStart, stepY));
-                }
-
-
-            return stepX * stepY * sum;
         }
     }
 }
