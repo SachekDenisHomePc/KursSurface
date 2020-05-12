@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using MathNet.Symbolics;
+using Microsoft.FSharp.Collections;
 
 namespace KursSurface
 {
@@ -9,14 +10,14 @@ namespace KursSurface
     {
         private readonly NumericalDifferentiation _numericalDifferentiation = new NumericalDifferentiation();
 
-        private readonly Expression _expression;
+        private readonly Func<double,double,double> _expression;
 
         public Surface(string expression)
         {
             if (expression == null)
                 throw new NullReferenceException();
 
-            _expression = Infix.ParseOrThrow(expression);
+            _expression = Compile.compileExpression2(Infix.ParseOrThrow(expression), Symbol.NewSymbol("x"), Symbol.NewSymbol("y")).Value;
         }
 
         private const double A = -2;
@@ -27,9 +28,9 @@ namespace KursSurface
 
         private double CalculateSourceFunction(double x, double y)
         {
-            var arguments = new Dictionary<string, FloatingPoint>() { { "x", x }, { "y", y } };
-
-            return Evaluate.Evaluate(arguments, _expression).RealValue;
+            //var arguments = new Dictionary<string, FloatingPoint>() {{"x", x}, {"y", y}};
+            //return Evaluate.Evaluate(arguments, _expression).RealValue;
+            return _expression(x, y);
 
             //return A * x * x + B * y * y + C * Math.Sin(x) * Math.Cos(y);
         }
