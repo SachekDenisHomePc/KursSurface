@@ -120,7 +120,7 @@ namespace SurfaceWebApp.Controllers
 
         public IActionResult GetSimpsonResult()
         {
-            return Json(JsonSerializer.Serialize(Math.Round(DataStorage.SurfaceData.SimpsonResult, 5)));
+            return Json(JsonSerializer.Serialize(Math.Round(DataStorage.SurfaceData.SimpsonResult, 4)));
         }
 
         public async Task<IActionResult> GetPythonResult()
