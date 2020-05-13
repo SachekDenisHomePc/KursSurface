@@ -127,6 +127,11 @@ namespace SurfaceWebApp.Controllers
         {
             var jsonPythonData = JsonSerializer.Serialize(DataStorage.SurfaceData);
 
+            using (var writer = new StreamWriter("transferData.json"))
+            {
+                writer.Write(jsonPythonData);
+            }
+
             var start = new ProcessStartInfo();
             start.FileName = "D:\\Python\\Python37_64\\python.exe";
             start.Arguments = Path.Combine(_hostEnvironment.ContentRootPath, "PythonScript", "PythonSurface.py");
